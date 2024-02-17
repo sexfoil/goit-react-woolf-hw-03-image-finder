@@ -1,9 +1,13 @@
 import css from './ImageGalleryItem.module.css';
 
-export const ImageGalleryItem = ({ src, alt }) => {
+export const ImageGalleryItem = ({ image, showCurrentImage }) => {
   return (
-    <li className={css['gallery-item']}>
-      <img className={css['gallery-item-img']} src={src} alt={alt} />
+    <li className={css['gallery-item']} onClick={() => showCurrentImage(image)}>
+      <img
+        className={css['gallery-item-img']}
+        src={image.webformatURL}
+        alt={image.tags}
+      />
     </li>
   );
 };

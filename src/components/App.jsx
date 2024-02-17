@@ -11,26 +11,79 @@ import css from './App.module.css';
 class App extends Component {
   state = {
     images: [],
+    query: '',
+    page: 1,
     loading: false,
+    loadMore: false,
+    currentImage: null,
   };
 
-  componentDidMount() {
-    this.getImages();
+  componentDidUpdate() {
+    // this.setState({ loading: true });
+    // this.getImages();
+    console.log('images>> ', this.state.images);
   }
 
-  getImages = async () => {
-    const data = await getPixabayImages('cat', 1);
-    this.setState({ images: data.hits });
+  showCurrentImage = image => {
+    this.setState({ currentImage: image });
+    // const img = this.state.images.find(image => image.id === imageId);
+    console.log('img>> ', image);
+  };
+
+  hideCurrentImage = () => {
+    this.setState({ currentImage: null });
+  };
+
+  getImages = async (query, page) => {
+    try {
+      this.setState({ loading: true });
+      if (query !== this.state.query) {
+        this.setState({ images: [] });
+      }
+      const data = await getPixabayImages(query, page);
+      this.setState(prev => {
+        const result =
+          prev.images && page !== 1
+            ? [...prev.images, ...data.hits]
+            : data.hits;
+        return {
+          images: result,
+          query: query,
+          page: prev.page + 1,
+          loadMore: result.length < data.totalHits,
+        };
+      });
+    } catch (error) {
+      console.log(`Something went wrong... Cause: ${error}`);
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
   render() {
     return (
       <div className={css.app}>
-        <Searchbar />
-        <ImageGallery images={this.state.images} />
+        <Searchbar getImages={this.getImages} />
+        {this.state.images && (
+          <ImageGallery
+            images={this.state.images}
+            showCurrentImage={this.showCurrentImage}
+          />
+        )}
         {this.state.loading && <Loader />}
-        {false && <Modal />}
-        <Button />
+        {this.state.loadMore && (
+          <Button
+            loadMore={this.getImages}
+            query={this.state.query}
+            page={this.state.page}
+          />
+        )}
+        {this.state.currentImage && (
+          <Modal
+            image={this.state.currentImage}
+            hideCurrentImage={this.hideCurrentImage}
+          />
+        )}
       </div>
     );
   }
