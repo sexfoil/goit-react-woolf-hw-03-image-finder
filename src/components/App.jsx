@@ -30,12 +30,11 @@ class App extends Component {
   handleCurrentImageEscPress = evt => {
     if (evt.code === 'Escape') {
       this.hideCurrentImage();
-      document.removeEventListener(this.handleCurrentImageEscPress);
+      document.removeEventListener('keydown', this.handleCurrentImageEscPress);
     }
   };
 
   getImages = async (query, page) => {
-    console.log('page>> ', page);
     try {
       this.setState({ loading: true });
       if (query !== this.state.query) {
