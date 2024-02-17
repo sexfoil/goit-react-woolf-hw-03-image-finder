@@ -18,23 +18,24 @@ class App extends Component {
     currentImage: null,
   };
 
-  componentDidUpdate() {
-    // this.setState({ loading: true });
-    // this.getImages();
-    console.log('images>> ', this.state.images);
-  }
-
   showCurrentImage = image => {
     this.setState({ currentImage: image });
-    // const img = this.state.images.find(image => image.id === imageId);
-    console.log('img>> ', image);
+    document.addEventListener('keydown', this.handleCurrentImageEscPress);
   };
 
   hideCurrentImage = () => {
     this.setState({ currentImage: null });
   };
 
+  handleCurrentImageEscPress = evt => {
+    if (evt.code === 'Escape') {
+      this.hideCurrentImage();
+      document.removeEventListener(this.handleCurrentImageEscPress);
+    }
+  };
+
   getImages = async (query, page) => {
+    console.log('page>> ', page);
     try {
       this.setState({ loading: true });
       if (query !== this.state.query) {
@@ -42,15 +43,15 @@ class App extends Component {
       }
       const data = await getPixabayImages(query, page);
       this.setState(prev => {
-        const result =
+        const allImages =
           prev.images && page !== 1
             ? [...prev.images, ...data.hits]
             : data.hits;
         return {
-          images: result,
+          images: allImages,
           query: query,
           page: prev.page + 1,
-          loadMore: result.length < data.totalHits,
+          loadMore: allImages.length < data.totalHits,
         };
       });
     } catch (error) {

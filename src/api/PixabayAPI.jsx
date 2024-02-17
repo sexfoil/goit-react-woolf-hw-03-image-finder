@@ -14,6 +14,5 @@ export const getPixabayImages = async (query, page) => {
       per_page: 12,
     },
   });
-  // console.log('data>> ', data);
   return data;
 };
