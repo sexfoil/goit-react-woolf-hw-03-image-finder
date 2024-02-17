@@ -36,7 +36,7 @@ class App extends Component {
 
   getImages = async (query, page) => {
     try {
-      this.setState({ loading: true });
+      this.setState({ loading: true, loadMore: false });
       if (query !== this.state.query) {
         this.setState({ images: [] });
       }
