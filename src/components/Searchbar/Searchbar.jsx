@@ -1,11 +1,11 @@
 import css from './Searchbar.module.css';
 
-export const Searchbar = ({ getImages }) => {
+export const Searchbar = ({ onSearchSubmit }) => {
   const handleSubmit = evt => {
     evt.preventDefault();
     const query = evt.target.query.value;
     if (query) {
-      return getImages(query, 1);
+      return onSearchSubmit(query);
     }
   };
 
